@@ -1,0 +1,60 @@
+body {
+    background-color: #FFCB05;
+    color: #00274C;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+}
+
+.container {
+    height: 90vh;
+    width: 80vw;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.app {
+    transform: translateY(0);
+    transition: transform 0.2s ease-in-out;
+}
+
+.app.score {
+    transform: translateY(-90vh);
+    /* opacity: 0; */
+}
+
+.app.score .end {
+    display: block;
+}
+
+.container.end {
+    display: none;
+}
+
+h1.congrats {
+    font-size: 3rem;
+    margin-bottom: 0;
+}
+
+h2.subtext {
+    font-weight: normal;
+}
+
+h1.score {
+    font-size: 150px;
+    margin-bottom: 0;
+}
+
+span.label {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+img {
+    max-width: 300px;
+}
