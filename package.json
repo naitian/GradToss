@@ -5,7 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "d3": "^5.16.0",
-    "d3-array": "^2.4.0"
+    "d3-array": "^2.4.0",
+    "firebase": "^7.14.2"
   },
   "devDependencies": {
     "cssnano": "^4.1.10"

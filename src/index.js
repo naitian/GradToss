@@ -1,7 +1,12 @@
+import * as firebase from "firebase/app";
+import "firebase/analytics";
+import "firebase/auth";
+import "firebase/firestore";
 import * as d3 from "d3";
 
 const SCHOOL_COLORS = {
   "umich.edu": {
+    school_name: "University of Michigan",
     main: "#FFCB05",
     text: "#00274C",
     gradient: ["#00274C", "#0d3264", "#3e5bbb"],
@@ -9,6 +14,7 @@ const SCHOOL_COLORS = {
     hashtag: "#MGoGrad",
   },
   "gatech.edu": {
+    school_name: "Georgia Tech",
     main: "#B3A369",
     text: "#FFF",
     gradient: ["#EAAA00", "#B7C42F", "#F5D580"],
@@ -82,12 +88,17 @@ const detectThrowEnd = () => {
   return -1;
 };
 
-const displayResult = (score) => {
+const displayResult = (score, db) => {
   document.querySelector(".app").classList.add("score");
   document.querySelector("h1.score").innerText = score.toFixed(2);
   document.querySelector(
     ".end > h2.subtext"
   ).innerText = `The sky's the limit. ${SCHOOL_CONFIG.message}`;
+  db.collection("tosses").add({
+    distance: score.toFixed(2),
+    school: SCHOOL_CONFIG.school_name,
+    timestamp: Math.floor(new Date().getTime() / 1000),
+  });
   document.querySelector(".tweet").innerHTML = "";
   twttr.widgets.createShareButton(
     "https://grad.naitian.org",
@@ -101,9 +112,29 @@ const displayResult = (score) => {
 };
 
 window.onload = function () {
-  console.log("v1");
+  console.log("v2");
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("school")) setSchool(urlParams.get("school"));
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyAxqvsJ_2ngh1roPCoXDPuvrUYj4cRWDBs",
+    authDomain: "captoss.firebaseapp.com",
+    databaseURL: "https://captoss.firebaseio.com",
+    projectId: "captoss",
+    storageBucket: "captoss.appspot.com",
+    messagingSenderId: "716030117576",
+    appId: "1:716030117576:web:4d8b8b93a76b43836607fd",
+    measurementId: "G-KLMDZZZT7F",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  firebase.auth().signInAnonymously();
+
+  firebase.auth().onAuthStateChanged(function (user) {
+    console.log("YEET AUTHED");
+  });
+  const db = firebase.firestore();
   navigator.permissions
     .query({ name: "accelerometer" })
     .then(function (result) {
@@ -126,7 +157,7 @@ window.onload = function () {
           pushBuffer(read);
           let distance = detectThrowEnd();
           if (distance > 0) {
-            displayResult(distance);
+            displayResult(distance, db);
           }
         });
       } else if (result.state === "prompt") {
