@@ -133,6 +133,7 @@ const displayResult = (score, db) => {
 window.onload = function () {
   console.log("v2");
   const urlParams = new URLSearchParams(window.location.search);
+  d3.select('svg').attr('width', '100%');
   if (urlParams.has("school")) setSchool(urlParams.get("school"));
   else selectSchool();
 
