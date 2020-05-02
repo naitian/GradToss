@@ -43,6 +43,23 @@ const pushBuffer = (magnitude) => {
   acc_buffer.push(magnitude);
 };
 
+const selectSchool = () => {
+  const dl = document.querySelector('datalist');
+  for (let key in SCHOOL_COLORS) {
+    let opt = document.createElement('option');
+    opt.innerText = SCHOOL_COLORS[key].school_name;
+    opt.value = key;
+    dl.appendChild(opt);
+  }
+  const sel = document.querySelector('input#school-select');
+  sel.addEventListener('input', function (e) {
+    if (e.target.value in SCHOOL_COLORS) {
+      document.querySelector('.overlay').style.display = 'none';
+      setSchool(e.target.value);
+    }
+  })
+}
+
 const setSchool = (school) => {
   if (school in SCHOOL_COLORS) {
     SCHOOL_CONFIG = SCHOOL_COLORS[school];
@@ -115,6 +132,7 @@ window.onload = function () {
   console.log("v2");
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("school")) setSchool(urlParams.get("school"));
+  else selectSchool();
 
   var firebaseConfig = {
     apiKey: "AIzaSyAxqvsJ_2ngh1roPCoXDPuvrUYj4cRWDBs",
