@@ -6,7 +6,8 @@ const magnitude = (x, y, z) => {
 
 const QUERY_RATE = 60; // times per second
 const BUFFER_TIME = 5; // seconds
-const ZERO_G_THRESH = 0.8; // meters per second squared
+const ZERO_G_THRESH = 1.5; // meters per second squared
+const CATCH_THRESH = 5;
 const GRAVITY = 9.81; // meters per second squared
 
 const acc_buffer = Array.from(Array(QUERY_RATE * BUFFER_TIME));
@@ -19,8 +20,8 @@ const pushBuffer = (magnitude) => {
 
 const detectThrowEnd = () => {
   if (
-    d3.mean(acc_buffer.slice(-10, -5)) < ZERO_G_THRESH &&
-    d3.mean(acc_buffer.slice(-5)) > ZERO_G_THRESH
+    d3.mean(acc_buffer.slice(-10, -5)) < ZERO_G_THRESH + 1 &&
+    d3.mean(acc_buffer.slice(-5)) > CATCH_THRESH
   ) {
     console.log("fall!");
     console.log(acc_buffer.slice(-150, -100));
@@ -39,7 +40,6 @@ const detectThrowEnd = () => {
     }
     // calculate time based on count
     let time = (zeros * 1.0) / QUERY_RATE;
-    console.log(time);
     // calculate distance based on time
     // we want to divide by 2 because half the distance is going up
     let distance = (0.5 * GRAVITY * time ** 2) / 2;
@@ -61,7 +61,8 @@ const displayResult = (score) => {
 };
 
 window.onload = function () {
-  console.log("hi");
+  // console.log("hi");
+  console.log("v1");
   navigator.permissions
     .query({ name: "accelerometer" })
     .then(function (result) {
@@ -84,7 +85,6 @@ window.onload = function () {
           pushBuffer(read);
           let distance = detectThrowEnd();
           if (distance > 0) {
-            // output.innerText = `${distance.toFixed(2)} meters`;
             displayResult(distance);
           }
         });
