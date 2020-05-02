@@ -44,6 +44,7 @@ const pushBuffer = (magnitude) => {
 };
 
 const selectSchool = () => {
+  const ol = document.querySelector('.overlay');
   const dl = document.querySelector('datalist');
   for (let key in SCHOOL_COLORS) {
     let opt = document.createElement('option');
@@ -51,10 +52,11 @@ const selectSchool = () => {
     opt.value = key;
     dl.appendChild(opt);
   }
+  ol.style.display = 'flex';
   const sel = document.querySelector('input#school-select');
   sel.addEventListener('input', function (e) {
     if (e.target.value in SCHOOL_COLORS) {
-      document.querySelector('.overlay').style.display = 'none';
+      ol.style.display = 'none';
       setSchool(e.target.value);
     }
   })
