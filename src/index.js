@@ -1,5 +1,24 @@
 import * as d3 from "d3";
 
+const SCHOOL_COLORS = {
+  "umich.edu": {
+    main: "#FFCB05",
+    text: "#00274C",
+    gradient: ["#00274C", "#0d3264", "#3e5bbb"],
+    message: "Congrats, and forever #GoBlue!",
+    hashtag: "#MGoGrad",
+  },
+  "gatech.edu": {
+    main: "#B3A369",
+    text: "#FFF",
+    gradient: ["#EAAA00", "#B7C42F", "#F5D580"],
+    message: "Congrats, and go yellow jackets!",
+    hashtag: "#GT20",
+  },
+};
+
+let SCHOOL_CONFIG = SCHOOL_COLORS["umich.edu"];
+
 const magnitude = (x, y, z) => {
   return Math.sqrt(x ** 2 + y ** 2 + z ** 2);
 };
@@ -16,6 +35,18 @@ acc_buffer.fill(GRAVITY);
 const pushBuffer = (magnitude) => {
   acc_buffer.shift();
   acc_buffer.push(magnitude);
+};
+
+const setSchool = (school) => {
+  if (school in SCHOOL_COLORS) {
+    SCHOOL_CONFIG = SCHOOL_COLORS[school];
+  }
+  document.querySelector("body").style.color = SCHOOL_CONFIG.text;
+  document.querySelector("body").style.backgroundColor = SCHOOL_CONFIG.main;
+  const gradient = document.querySelector("#_Linear1");
+  gradient
+    .querySelectorAll("stop")
+    .forEach((el, ind) => (el.style.stopColor = SCHOOL_CONFIG.gradient[ind]));
 };
 
 const detectThrowEnd = () => {
@@ -54,15 +85,25 @@ const detectThrowEnd = () => {
 const displayResult = (score) => {
   document.querySelector(".app").classList.add("score");
   document.querySelector("h1.score").innerText = score.toFixed(2);
+  document.querySelector(
+    ".end > h2.subtext"
+  ).innerText = `The sky's the limit. ${SCHOOL_CONFIG.message}`;
   document.querySelector(".tweet").innerHTML = "";
-  twttr.widgets.createShareButton("https://grad.naitian.org", document.querySelector(".tweet"), {
-    text: `I just tossed my #GradCap ${score.toFixed(2)} meters. The sky is the limit! #MGoGrad`,
-  });
+  twttr.widgets.createShareButton(
+    "https://grad.naitian.org",
+    document.querySelector(".tweet"),
+    {
+      text: `I just tossed my #GradCap ${score.toFixed(
+        2
+      )} meters. The sky is the limit! ${SCHOOL_CONFIG.hashtag}`,
+    }
+  );
 };
 
 window.onload = function () {
-  // console.log("hi");
   console.log("v1");
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("school")) setSchool(urlParams.get("school"));
   navigator.permissions
     .query({ name: "accelerometer" })
     .then(function (result) {
